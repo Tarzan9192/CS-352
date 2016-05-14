@@ -114,20 +114,48 @@ infix 1 -->
 (-->) U C = C
 (-->) U U = C
 
-{-
+
 -- The Or operator is just above equivalence in precedence
 infix 2 <|> 
 --TODO Implement the infix operator <|> (Or)
-
+(<|>) :: Lukasiewicz -> Lukasiewicz -> Lukasiewicz
+(<|>) C I = C
+(<|>) C C = C
+(<|>) C U = C
+(<|>) I I = I
+(<|>) I C = C
+(<|>) I U = U 
+(<|>) U I = U
+(<|>) U C = C
+(<|>) U U = U
 
 -- The And operator is just above Or in precedence
 infix 3 <&> 
 --TODO Implement the infix operator <&> (And)
+(<&>) :: Lukasiewicz -> Lukasiewicz -> Lukasiewicz
+(<&>) C I = I
+(<&>) C C = C
+(<&>) C U = U
+(<&>) I I = I
+(<&>) I C = I
+(<&>) I U = I
+(<&>) U I = I
+(<&>) U C = U
+(<&>) U U = U
 
 -- The equivalence operator has the lowest precedence infix:
 infix 1 <-> 
 --TODO Implement the infix operator <-> (equivalence)
-
+(<->) :: Lukasiewicz -> Lukasiewicz -> Lukasiewicz
+(<->) C I = I
+(<->) C C = C
+(<->) C U = U
+(<->) I I = C
+(<->) I C = I
+(<->) I U = U
+(<->) U I = U
+(<->) U C = U
+(<->) U U = C
 
 -- This completes part 1. You can use the following functions to test your implementation
 testNeg :: Bool 
@@ -188,7 +216,7 @@ testAnd = ((C <&> I) == I)
 
 testPart1 = testNeg && testPos && testCer && testUnk && testEquiv && testImply && testOr && testAnd
 
-
+{-
 {- P A R T 2 : Implementation of a parser for Łukasiewicz expressions
 --TODO Define the type LExpTree, using the constructors L, V, N, Q, S, K, A, O, E, I
 L for Lukasiewicz literals (i.e. C, I or U)
