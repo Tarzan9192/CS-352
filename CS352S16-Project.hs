@@ -76,19 +76,45 @@ data Lukasiewicz = C | I | U
     deriving (Eq,  Show, Ord)
 
 --TODO: Implement the negation function
-
+negation :: Lukasiewicz -> Lukasiewicz
+negation x | x == C = I
+           | x == U = U
+           | x == I = C
 
 --TODO: Implement the possible function
+possible :: Lukasiewicz -> Lukasiewicz
+possible x | x == C = C
+           | x == U = C
+           | x == I = I
 
 --TODO: Implement the sure function
+sure :: Lukasiewicz -> Lukasiewicz
+sure x | x == C = C
+       | x == U = I
+       | x == I = I
 
 --TODO: Implement the unknown function
+unknown :: Lukasiewicz -> Lukasiewicz
+unknown x | x == C = I
+          | x == U = C
+          | x == I = I
 
 
 -- The implication operator has the lowest precedence infix
 infix 1 --> 
 --TODO Implement the infix operator --> (implication)
+(-->) :: Lukasiewicz -> Lukasiewicz -> Lukasiewicz
+(-->) C I = I
+(-->) C C = C
+(-->) C U = U
+(-->) I I = C
+(-->) I C = C
+(-->) I U = C
+(-->) U I = U
+(-->) U C = C
+(-->) U U = C
 
+{-
 -- The Or operator is just above equivalence in precedence
 infix 2 <|> 
 --TODO Implement the infix operator <|> (Or)
@@ -427,4 +453,5 @@ testPart4 = testVarList && testDictList && testTautology
 
 testAll :: Bool
 testAll = testPart1 && testPart2 && testPart3 && testPart4
+-}
 
