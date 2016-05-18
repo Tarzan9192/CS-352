@@ -216,9 +216,10 @@ testAnd = ((C <&> I) == I)
 
 testPart1 = testNeg && testPos && testCer && testUnk && testEquiv && testImply && testOr && testAnd
 
-{-
+
 {- P A R T 2 : Implementation of a parser for Łukasiewicz expressions
 --TODO Define the type LExpTree, using the constructors L, V, N, Q, S, K, A, O, E, I
+
 L for Lukasiewicz literals (i.e. C, I or U)
 V for Variables (string) 
 N for a node representing the prefix neg
@@ -231,8 +232,9 @@ E for a node representing the infix Equivalence
 M for a node representing the infix Implication
 It will be convenient to have the new type derive from the classes Show and Eq
 -}
-
-
+data LExpTree = L | V | N | Q | S | K | A | E | M
+   deriving (Show, Eq)
+{---REMOVE THIS!!!---
 {-Grammar:
 
 We use the following grammar for the Łukasiewicz expressions
@@ -255,6 +257,8 @@ The type "Parser a" is defined in the file Parser.hs. You can (and probably shou
 make use of the functions in that file. They are the same as those we have seen in class.
 Hint: you will need to define a function for each of the rules of the grammar.
 -}
+
+
 
 
 -- TODO: Implement a function parseT that takes a string as input 
@@ -367,6 +371,7 @@ testExp = lt == (L C) && lf == (L I) && lm == (L U) && pv == (V "id2")  && pe ==
 
 testPart2 :: Bool
 testPart2 = testLit && testVar && testPrim && testFact && testTerm && testOpd && testExp
+-}--REMOVE THIS!!!---
 
 -- P A R T 3: Create an evaluator for LExpTree's 
 
@@ -381,6 +386,11 @@ type Dict = [(String, Lukasiewicz)]
   Note: You do not have to worry about the efficiency of the search, the number
   of variables will be limited.  
 -}
+--WHAT IS BASE CASE????
+lk :: Dict -> String -> Lukasiewicz
+lk ((a,b):xs) str | (fst (a,b)) == str = snd (a,b)
+                  | otherwise = lk xs str
+
 
 {- TODO create a function evalT that takes a dictionary, and an expression tree
 and returns the value of the expresion given the value assigned to the variables
@@ -397,7 +407,7 @@ testLk :: Bool
 testLk =  ((lk testDict "vC") == C)
        && ((lk testDict "vI") == I)
        && ((lk testDict "vU") == U)
-
+{----REMOVE THIS!!!---
 testEvalT :: Bool
 testEvalT = evalT testDict (O (V "vC",O (N (V "vC"),E (V "vC",L U)))) == C
           && evalT testDict (O (V "vI",O (N (V "vI"),E (V "vI",L U)))) == C
@@ -481,5 +491,5 @@ testPart4 = testVarList && testDictList && testTautology
 
 testAll :: Bool
 testAll = testPart1 && testPart2 && testPart3 && testPart4
--}
+-}--REMOVE THIS!!!---
 
