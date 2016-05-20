@@ -232,9 +232,23 @@ E for a node representing the infix Equivalence
 M for a node representing the infix Implication
 It will be convenient to have the new type derive from the classes Show and Eq
 -}
-data LExpTree = L | V | N | Q | S | K | A | E | M
+data LExpTree  a = L a
+              | V a
+              | N (LExpTree a)
+              | Q (LExpTree a)
+              | S (LExpTree a)
+              | K (LExpTree a)
+              | A (LExpTree a) (LExpTree a)
+              | E (LExpTree a) (LExpTree a)
+              | M (LExpTree a) (LExpTree a)
    deriving (Show, Eq)
-{---REMOVE THIS!!!---
+
+size :: LExpTree a -> Int
+size (L x) = 1
+size(V x) = size x
+size(
+
+
 {-Grammar:
 
 We use the following grammar for the Łukasiewicz expressions
@@ -263,6 +277,7 @@ Hint: you will need to define a function for each of the rules of the grammar.
 
 -- TODO: Implement a function parseT that takes a string as input 
 -- and returns a Łukasiewicz logic expression tree (LExpTree)
+parseT :: String -> LExpTree
 
 -- This completes part 2. You can use the following functions to test your implementation
 
@@ -396,6 +411,8 @@ lk ((a,b):xs) str | (fst (a,b)) == str = snd (a,b)
 and returns the value of the expresion given the value assigned to the variables
 in the dictionary.
 -}
+evalT :: Dict -> LExpTree -> Lukasiewicz
+evalT parseT LExpTree
 
 
 -- This completes part 3. You can use the following functions to test your implementation
