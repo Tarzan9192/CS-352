@@ -273,9 +273,9 @@ lukLit = P (\s -> case parse ((symbol "C") +++ (symbol "I") +++ (symbol "U")) s 
                      Just ("I", t) -> Just (L I, t)
                      Just ("U", t) -> Just (L U, t))  
 
-lukVar = P (\s -> case parse (token (string s)) s of
+lukVar = P (\s -> case parse (token ident) s of
                        Nothing -> Nothing
-                       Just(v, t) -> Just( V s, t))
+                       Just(v, t) -> Just(V v, t))
 
 
 -- TODO: Implement a function parseT that takes a string as input 
