@@ -232,21 +232,16 @@ E for a node representing the infix Equivalence
 M for a node representing the infix Implication
 It will be convenient to have the new type derive from the classes Show and Eq
 -}
-data LExpTree  a = L a
-              | V a
-              | N (LExpTree a)
-              | Q (LExpTree a)
-              | S (LExpTree a)
-              | K (LExpTree a)
-              | A (LExpTree a) (LExpTree a)
-              | E (LExpTree a) (LExpTree a)
-              | M (LExpTree a) (LExpTree a)
+data LExpTree = L Lukasiewicz
+              | V String
+              | N LExpTree
+              | Q LExpTree
+              | S LExpTree
+              | K LExpTree
+              | A LExpTree LExpTree
+              | E LExpTree LExpTree
+              | M LExpTree LExpTree
    deriving (Show, Eq)
-
-size :: LExpTree a -> Int
-size (L x) = 1
-size(V x) = size x
-size(
 
 
 {-Grammar:
@@ -271,13 +266,21 @@ The type "Parser a" is defined in the file Parser.hs. You can (and probably shou
 make use of the functions in that file. They are the same as those we have seen in class.
 Hint: you will need to define a function for each of the rules of the grammar.
 -}
+lukLit :: Parser LExpTree
+lukLit = P (\s -> case parse ((symbol "C") +++ (symbol "I") +++ (symbol "U")) s of
+                     Nothing -> Nothing
+                     Just ("C", t) -> Just (L C, t)
+                     Just ("I", t) -> Just (L I, t)
+                     Just ("U", t) -> Just (L U, t))  
 
-
+lukVar = P (\s -> case parse (token (string s)) s of
+                       Nothing -> Nothing
+                       Just(v, t) -> Just( V s, t))
 
 
 -- TODO: Implement a function parseT that takes a string as input 
 -- and returns a Łukasiewicz logic expression tree (LExpTree)
-parseT :: String -> LExpTree
+--parseT :: String -> LExpTree
 
 -- This completes part 2. You can use the following functions to test your implementation
 
@@ -289,7 +292,7 @@ testLit = lt == (L C) && lf == (L I) && lm == (L U)
 
 testVar :: Bool
 testVar = id == (V "id") where Just (id, _) = parse lukVar " id "
-
+{-
 testPrim :: Bool
 testPrim = lt == (L C) && lf == (L I) && lm == (L U) && pv == (V "id2")  && pe == (L C)
             where Just (lt, "") = parse lukPrim " C " 
@@ -387,7 +390,7 @@ testExp = lt == (L C) && lf == (L I) && lm == (L U) && pv == (V "id2")  && pe ==
 testPart2 :: Bool
 testPart2 = testLit && testVar && testPrim && testFact && testTerm && testOpd && testExp
 -}--REMOVE THIS!!!---
-
+{-
 -- P A R T 3: Create an evaluator for LExpTree's 
 
 {- Since our expressions will include free variables we need to use a dictionary to 
@@ -412,7 +415,7 @@ and returns the value of the expresion given the value assigned to the variables
 in the dictionary.
 -}
 evalT :: Dict -> LExpTree -> Lukasiewicz
-evalT parseT LExpTree
+evalT parseT LExpree
 
 
 -- This completes part 3. You can use the following functions to test your implementation
@@ -509,4 +512,4 @@ testPart4 = testVarList && testDictList && testTautology
 testAll :: Bool
 testAll = testPart1 && testPart2 && testPart3 && testPart4
 -}--REMOVE THIS!!!---
-
+-}
