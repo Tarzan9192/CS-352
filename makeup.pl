@@ -8,6 +8,21 @@ execute(X,R):- s(X,[],R).
 
 say(X):- s(X,[]).
 
+% This predicate represents a query from
+% the user.
+s(X,Y,R):-
+  qp(X,Z),
+  propf(Z,[Noun|Y],[Prop|_]),
+  R = ["I don't know"],
+  \+ thing([Prop,Noun,_]),!.
+
+
+s(X,Y,R):-
+  qp(X,Z),
+  propf(Z,[Noun|Y],[Prop|_]),
+  thing([Prop,Noun,Adj]),
+  R = ["The",Noun,"is",Adj].
+
 % When property is not given.
 s(X,Y,R):-
   det(X,Z),
@@ -77,6 +92,13 @@ ap([N|T],R,[_,N,Adj]):-
   assert(adj(Adj)),
   R = [].
 
+qp(X,Y):-
+  query(X,Z),
+  asign(Z,V),
+  det(V,Y).
+
 det([the|W],W).
 prep([of|W],W).
 asign([is|W],W).
+query(['What'|W],W).
+query([what|W],W).
