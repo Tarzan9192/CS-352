@@ -4,6 +4,33 @@
 :- dynamic adj/1.
 :- dynamic thing/1.
 
+size(big).
+size(huge).
+size(large).
+size(medium).
+size(small).
+size(little).
+size(tiny).
+
+color(red).
+color(yellow).
+color(blue).
+color(green).
+color(purple).
+color(orange).
+color(black).
+color(white).
+
+length(inches).
+length(yards).
+length(feet).
+length(centimeters).
+length(meters).
+length(kilometers).
+
+capacity(liters).
+capacity(mililiters).
+
 execute(X,R):- s(X,[],R).
 
 say(X):- s(X,[]).
@@ -21,7 +48,7 @@ s(X,Y,R):-
   qp(X,Z),
   propf(Z,[Noun|Y],[Prop|_]),
   thing([Prop,Noun,Adj]),
-  R = ["The",Noun,"is",Adj].
+  R = ["The",Prop,"of the",Noun,"is",Adj].
   % --------------------------------%
 
 % ----When property is not given.----%
@@ -37,17 +64,18 @@ s(X,Y,R):-
 s(X,Y,R):-
   det(X,Z),
   ap(Z,Y,P),
-  P = [_,Noun,_],
-  thing([_,Noun,RealAdj]),
-  R = ["No, it's", RealAdj],
+  P = [Prop,Noun,Adj],
+  thing([Prop,Noun,RealAdj]),
+  R = ["No, the",Prop,"of the",Noun,"is",RealAdj],
   \+ thing(P),!.
 
-% If no contradiciton, assert thing.
 s(X,Y,R):-
   det(X,Z),
   ap(Z,Y,P),
+  P = [Prop,Noun,Adj],
   assert(thing(P)),
-  R = ['Ok'].
+  R = ['Ok'],!.
+
   % ---------------------------------%
 
 %--- When the property IS given------%
@@ -65,9 +93,9 @@ s(X,Y,R):-
   det(X,Z),
   propf(Z,A,P),
   ap(A,Y,P),
-  P = [_,Noun,_],
-  thing([_,Noun,RealAdj]),
-  R = ["No, it's", RealAdj],
+  P = [Prop,Noun,Adj],
+  thing([Prop,Noun,RealAdj]),
+  R = ["No, the",Prop,"of the",Noun,"is",RealAdj],
   \+ thing(P),!.
 
 % If no contradiciotn, assert thing with property name.
@@ -93,14 +121,66 @@ desc(X,Y):-
   det(Z,Y).
 
 % This predicate represents an assignment phrase
-% i.e. "is <adjective>". Used to represent an adjective
+% i.e. "<noun> is <adjective>". Used to represent an adjective
 % being assigned to a noun.
-ap([N|T],R,[_,N,Adj]):-
+
+% Check for 'color' property
+ap([N|T],R,[P,N,Adj]):-
+  asign(T,Adj),
+  assert(n(N)),
+  assert(adj(Adj)),
+  var(P),
+  Adj = [A|_],
+  color(A),
+  P = color,
+  R = [],!.
+
+% Check for 'size' property
+ap([N|T],R,[P,N,Adj]):-
+  asign(T,Adj),
+  assert(n(N)),
+  assert(adj(Adj)),
+  var(P),
+  Adj = [A|_],
+  size(A),
+  P = size,
+  R = [],!.
+
+% Check for 'length' property
+ap([N|T],R,[P,N,Adj]):-
+  asign(T,Adj),
+  assert(n(N)),
+  assert(adj(Adj)),
+  var(P),
+  Adj = [_,A|_],
+  length(A),
+  P = length,
+  R = [],!.
+
+% Check for 'capacity' property
+ap([N|T],R,[P,N,Adj]):-
+  asign(T,Adj),
+  assert(n(N)),
+  assert(adj(Adj)),
+  var(P),
+  Adj = [_,A|_],
+  capacity(A),
+  P = capacity,
+  R = [],!.
+
+% Default, property is uninstantiated.
+% I can add more recognition capabilities
+% by initializing more property predicates and adding more
+% recogniziotn predicates here, thus allowing the
+% program to recognize more types of properties.
+ap([N|T],R,[P,N,Adj]):-
   asign(T,Adj),
   assert(n(N)),
   assert(adj(Adj)),
   R = [].
 
+% This predicate represents a 'query phrase',
+% i.e. "What is the..."
 qp(X,Y):-
   query(X,Z),
   asign(Z,V),
