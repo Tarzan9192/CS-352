@@ -22,8 +22,11 @@ s(X,Y,R):-
   propf(Z,[Noun|Y],[Prop|_]),
   thing([Prop,Noun,Adj]),
   R = ["The",Noun,"is",Adj].
+  % --------------------------------%
 
-% When property is not given.
+% ----When property is not given.----%
+
+% If the thing is known.
 s(X,Y,R):-
   det(X,Z),
   ap(Z,Y,P),
@@ -39,13 +42,17 @@ s(X,Y,R):-
   R = ["No, it's", RealAdj],
   \+ thing(P),!.
 
+% If no contradiciton, assert thing.
 s(X,Y,R):-
   det(X,Z),
   ap(Z,Y,P),
   assert(thing(P)),
   R = ['Ok'].
+  % ---------------------------------%
 
-% When the property IS given
+%--- When the property IS given------%
+
+% If thing is known.
 s(X,Y,R):-
   det(X,Z),
   propf(Z,A,P),
@@ -63,12 +70,14 @@ s(X,Y,R):-
   R = ["No, it's", RealAdj],
   \+ thing(P),!.
 
+% If no contradiciotn, assert thing with property name.
 s(X,Y,R):-
   det(X,Z),
   propf(Z,A,P),
   ap(A,Y,P),
   assert(thing(P)),
   R = ['Ok'].
+  % ----------------------------------%
 
 % This predicate represents a property phrase,
 % which consists of a property followed by a
