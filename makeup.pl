@@ -33,6 +33,10 @@ length(kilometers).
 capacity(liters).
 capacity(mililiters).
 
+% This his the main functional predicate for the program.
+% The user input is bound to X, the empty list represents
+% when all input has been read. Prolog's response will be
+% bound to R.
 execute(X,R):- s(X,[],R).
 
 % Not used.
@@ -81,7 +85,7 @@ s(X,Y,R):-
 
   % ---------------------------------%
 
-%--- When the property IS given------%
+%----When the property IS given------%
 
 % If thing is known.
 s(X,Y,R):-
