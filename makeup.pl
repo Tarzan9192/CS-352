@@ -20,6 +20,8 @@ color(purple).
 color(orange).
 color(black).
 color(white).
+color(gold).
+color(silver).
 
 length(inches).
 length(yards).
@@ -33,6 +35,7 @@ capacity(mililiters).
 
 execute(X,R):- s(X,[],R).
 
+% Not used.
 say(X):- s(X,[]).
 
 % This predicate represents a query from
@@ -43,7 +46,8 @@ s(X,Y,R):-
   R = ["I don't know"],
   \+ thing([Prop,Noun,_]),!.
 
-
+% This predicate is for when prolog knows about the
+% thing being queried.
 s(X,Y,R):-
   qp(X,Z),
   propf(Z,[Noun|Y],[Prop|_]),
@@ -64,7 +68,7 @@ s(X,Y,R):-
 s(X,Y,R):-
   det(X,Z),
   ap(Z,Y,P),
-  P = [Prop,Noun,Adj],
+  P = [Prop,Noun,_],
   thing([Prop,Noun,RealAdj]),
   R = ["No, the",Prop,"of the",Noun,"is",RealAdj],
   \+ thing(P),!.
@@ -72,7 +76,6 @@ s(X,Y,R):-
 s(X,Y,R):-
   det(X,Z),
   ap(Z,Y,P),
-  P = [Prop,Noun,Adj],
   assert(thing(P)),
   R = ['Ok'],!.
 
@@ -93,7 +96,7 @@ s(X,Y,R):-
   det(X,Z),
   propf(Z,A,P),
   ap(A,Y,P),
-  P = [Prop,Noun,Adj],
+  P = [Prop,Noun,_],
   thing([Prop,Noun,RealAdj]),
   R = ["No, the",Prop,"of the",Noun,"is",RealAdj],
   \+ thing(P),!.
@@ -110,9 +113,11 @@ s(X,Y,R):-
 % This predicate represents a property phrase,
 % which consists of a property followed by a
 % prepostiional phrase, i.e. "...color of the...".
-propf([P|T],R,[P,_,_]):-
-  desc(T,R),
-  assert(prop(P)).
+%
+% The last argument is an accumulator, which will
+% accumulate the definition of the thing as [Property,Noun,Adjective].
+propf([Prop|T],R,[Prop,_,_]):-
+  desc(T,R).
 
 % This predicate represents a 'describer',
 % or a prepostiional phrase, i.e. "...of the...".
@@ -127,8 +132,6 @@ desc(X,Y):-
 % Check for 'color' property
 ap([N|T],R,[P,N,Adj]):-
   asign(T,Adj),
-  assert(n(N)),
-  assert(adj(Adj)),
   var(P),
   Adj = [A|_],
   color(A),
@@ -138,8 +141,6 @@ ap([N|T],R,[P,N,Adj]):-
 % Check for 'size' property
 ap([N|T],R,[P,N,Adj]):-
   asign(T,Adj),
-  assert(n(N)),
-  assert(adj(Adj)),
   var(P),
   Adj = [A|_],
   size(A),
@@ -149,8 +150,6 @@ ap([N|T],R,[P,N,Adj]):-
 % Check for 'length' property
 ap([N|T],R,[P,N,Adj]):-
   asign(T,Adj),
-  assert(n(N)),
-  assert(adj(Adj)),
   var(P),
   Adj = [_,A|_],
   length(A),
@@ -160,8 +159,6 @@ ap([N|T],R,[P,N,Adj]):-
 % Check for 'capacity' property
 ap([N|T],R,[P,N,Adj]):-
   asign(T,Adj),
-  assert(n(N)),
-  assert(adj(Adj)),
   var(P),
   Adj = [_,A|_],
   capacity(A),
@@ -173,10 +170,8 @@ ap([N|T],R,[P,N,Adj]):-
 % by initializing more property predicates and adding more
 % recogniziotn predicates here, thus allowing the
 % program to recognize more types of properties.
-ap([N|T],R,[P,N,Adj]):-
+ap([N|T],R,[_,N,Adj]):-
   asign(T,Adj),
-  assert(n(N)),
-  assert(adj(Adj)),
   R = [].
 
 % This predicate represents a 'query phrase',
